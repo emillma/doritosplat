@@ -1,0 +1,45 @@
+{
+    // "image": "devcontainer:latest",
+    "image": "gaussiansplatting:latest",
+    "forwardPorts": [
+        3000,
+        8050,
+        54321
+    ],
+    "extensions": [
+        "ms-azuretools.vscode-docker",
+        "ms-vscode.cpptools",
+        "ms-vscode.cpptools-extension-pack",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-vscode-remote.remote-ssh",
+        "kevinrose.vsc-python-indent",
+        "editorconfig.editorconfig",
+        "nvidia.nsight-vscode-edition",
+        "mhutchie.git-graph",
+        "znck.grammarly",
+        // "james-yu.latex-workshop",
+        "github.copilot",
+        "janisdd.vscode-edit-csv",
+        "modular-mojotools.vscode-mojo",
+        "ms-python.black-formatter"
+    ],
+    "name": "mycontainer",
+    "runArgs": [
+        "--gpus=all",
+        "--net=host",
+        // "--add-host=host.docker.internal:host-gateway",
+        // "${localEnv:DEVCONTAINER_RUN_ARGS}",
+        // "--privileged",
+        // "--net=host",
+        // "--device=/dev/spidev0.0",
+        // "--runtime=nvidia"
+        // "--ipc=host",
+        // "--device=/dev/bus/usb/001/002"
+    ],
+    // "remoteEnv": {"DISPLAY":''},
+    // "initializeCommand": "cd ${localWorkspaceFolder}/.devcontainer && python3 initialize.py",
+    "postStartCommand": "cd ${containerWorkspaceFolder}/.devcontainer && python3 post_start.py"
+    // "workspaceFolder": "/workspaces",
+    // "workspaceMount": "source=sensorrig-ws,target=/workspace,type=volume",
+}
