@@ -1,0 +1,23 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/mylib/include",
+                "${workspaceFolder}/mylib/include/optix",
+                // "${workspaceFolder}/mylib/include/sutil",
+                // "${workspaceFolder}/mylib/include/cuda",
+                "/usr/local/cuda/include",
+                "/opt/conda/lib/python3.10/site-packages/torch/include",
+                "/opt/conda/lib/python3.10/site-packages/torch/include/torch/csrc/api/include/",
+                "/opt/conda/include/python3.10",
+            ],
+            "defines": [],
+            "cStandard": "gnu17",
+            "cppStandard": "gnu++17",
+            // "intelliSenseMode": "linux-gcc-arm64"
+            "intelliSenseMode": "linux-clang-x64"
+        }
+    ],
+    "version": 4
+}
