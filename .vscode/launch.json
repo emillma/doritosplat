@@ -19,6 +19,14 @@
             "program": "test.py",
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "Python: Run Mylib",
+            "type": "python",
+            "request": "launch",
+            "program": "run_mylib.py",
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }

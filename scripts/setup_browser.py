@@ -42,7 +42,7 @@ def open_html_in_browser(html, using=None, new=0, autoraise=True):
             self.send_header("Content-type", "text/html")
             self.end_headers()
 
-            bufferSize = 1024 * 1024
+            bufferSize = 1024 * 32
             for i in range(0, len(html), bufferSize):
                 self.wfile.write(html[i : i + bufferSize])
 
@@ -50,7 +50,9 @@ def open_html_in_browser(html, using=None, new=0, autoraise=True):
             # Silence stderr logging
             pass
 
-    server = HTTPServer(("127.0.0.1", 54321), OneShotRequestHandler)  # fixed port number
+    server = HTTPServer(
+        ("127.0.0.1", 54321), OneShotRequestHandler
+    )  # fixed port number
     browser.open(
         "http://127.0.0.1:%s" % server.server_port, new=new, autoraise=autoraise
     )

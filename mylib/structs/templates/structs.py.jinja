@@ -1,0 +1,18 @@
+from pathlib import Path
+from dataclasses import dataclass, field, fields
+from mylib._loader import load
+cpp = load('structs', Path(__file__).parent, False)
+
+{% for s in structs %}
+@dataclass
+class {{ s.name }}: 
+    {% for f in s.fields %}
+    {{ f.name }}: '{{ f.type }}' = field(default=0)
+    {% endfor %}
+
+    def __new__(cls, **kwargs):
+        obj = cpp.{{ s.name }}()
+        for k, v in kwargs.items():
+            setattr(obj, k, v)
+        return obj
+{% endfor %}

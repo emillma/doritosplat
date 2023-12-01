@@ -24,11 +24,24 @@ class Vertex:
         return Vertex(self.x + x, self.y + y, self.z + z, *self.color)
 
     def recolor(self, r=None, g=None, b=None, a=None):
-        r = self.r if r is None else r
-        g = self.g if g is None else g
-        b = self.b if b is None else b
-        a = self.a if a is None else a
         return Vertex(*self.pos, r, g, b, a)
+
+    def realpha(self, alpha):
+        return Vertex(*self.pos, self.r, self.g, self.b, alpha)
+
+    def move_towards(
+        self, *moves: tuple["Vertex", float], r=None, g=None, b=None, a=None
+    ):
+        """Move towards a vertex by a given distance."""
+        move = np.array([0.0, 0.0, 0.0])
+        pos = np.array(self.pos)
+        for v, d in moves:
+            move += (np.array(v.pos) - pos) * d
+        r = r if r is not None else self.r
+        g = g if g is not None else self.g
+        b = b if b is not None else self.b
+        a = a if a is not None else self.a
+        return Vertex(*(pos + move), r, g, b, a)
 
 
 @dataclass(frozen=True)
