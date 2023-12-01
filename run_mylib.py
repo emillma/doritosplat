@@ -1,8 +1,7 @@
-from mylib import funcs, structs
-import torch
+import mylib
 
-a = structs.OptixDisplacementMicromapDesc()
-print(a)
+a = mylib.types.MyContext()
+print(a.context)
 # a = cpp.
 # vertices = torch.tensor(
 #     [

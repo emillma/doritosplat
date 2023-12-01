@@ -3,6 +3,7 @@
         {
             "name": "OptiX",
             "includePath": [
+                "${workspaceFolder}/mylib/src",
                 "${workspaceFolder}/mylib/include",
                 "${workspaceFolder}/mylib/include/optix",
                 "${workspaceFolder}/mylib/include/support",
@@ -16,7 +17,7 @@
             "defines": [],
             "cStandard": "gnu17",
             "cppStandard": "gnu++17",
-            "intelliSenseMode": "linux-clang-x64"
+            // "intelliSenseMode": "linux-clang-x64"
         }
     ],
     "version": 4

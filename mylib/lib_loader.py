@@ -5,35 +5,32 @@ import jsonc
 from subprocess import run
 
 cwd = Path.cwd()
-this_dir = Path(__file__).parent
-
 props = jsonc.loads((cwd / ".vscode/c_cpp_properties.json").read_text())
 config = next(c for c in props["configurations"] if c["name"] == "OptiX")
 include_path: list[str] = config["includePath"]
 include_dirs = [p.replace("${workspaceFolder}", str(cwd)) for p in include_path]
 
-build_dir = this_dir / "build"
-build_dir.mkdir(exist_ok=True)
 
+def load_lib(name: str, sources: Path):
+    if not isinstance(sources, list):
+        sources = [p for f in ["cu", "cpp"] for p in sources.glob(f"*.{f}")]
 
-def load(name: str, source_dir: Path, with_cuda=True):
-    try:
-        module = cpp_extension.load(
-            name=name,
-            sources=[str(p) for f in ["cu", "cpp"] for p in source_dir.glob(f"*.{f}")],
-            build_directory=str(build_dir),
-            verbose=True,
-            extra_include_paths=[str(p) for p in include_dirs],
-            with_cuda=with_cuda,
-            extra_cuda_cflags=[
-                "-arch=sm_89",
-                "--use_fast_math",
-                "--ptxas-options=-v",
-            ],
-        )
-    except Exception as e:
-        print(e)
-        raise e
+    build_dir = Path(__file__).parent / "build"
+    build_dir.mkdir(exist_ok=True, parents=True)
+    module = cpp_extension.load(
+        name=name,
+        sources=[str(s) for s in sources],
+        build_directory=str(build_dir),
+        verbose=True,
+        extra_include_paths=[str(p) for p in include_dirs],
+        with_cuda=True,
+        extra_cuda_cflags=[
+            "-arch=sm_89",
+            "--use_fast_math",
+            "--ptxas-options=-v",
+        ],
+    )
+
     return module
 
 

@@ -1,0 +1,24 @@
+#include "optix_types.h"
+#include "mytypes.h"
+
+#include <torch/extension.h>
+PYBIND11_MODULE(types, m)
+{
+    {% for s in structs %}
+    py::class_<{{s.name}}>(m, "{{s.name}}")
+        .def(py::init<>())
+        {% for f in s.fields %}
+        .def_readwrite("{{f.name}}", &{{s.name}}::{{f.name}})
+        {% endfor %};
+
+    {% endfor %}
+
+    {% for e in enums %}
+    py::enum_<{{e.name}}>(m, "{{e.name}}")
+        {% for v in e.values %}
+        .value("{{v.name}}", {{v.name}})
+        {% endfor %}
+        .export_values();
+
+    {% endfor %}
+}

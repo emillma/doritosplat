@@ -1,0 +1,16 @@
+from dataclasses import dataclass
+
+{% for s in structs %}
+@dataclass
+class {{ s.name }}: 
+    {% for f in s.fields %}
+    {{ f.name }}: '{{ f.type }}'
+    {% endfor %}
+{% endfor %}
+ 
+{% for e in enums %}
+class {{ e.name }}:
+    {% for v in e.values %}
+    {{ v.name }}: int
+    {% endfor %}
+{% endfor %}
