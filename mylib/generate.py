@@ -17,6 +17,7 @@ class Struct:
     name: str
     fields: list[Field] = field(default_factory=list)
     comment: str = ""
+    start: int = 0
 
 
 @dataclass
@@ -31,6 +32,7 @@ class Enum:
     name: str
     values: list[Value] = field(default_factory=list)
     comment: str = ""
+    start: int = 0
 
 
 def get_structs(path: Path, filt=None):
@@ -46,10 +48,10 @@ def get_structs(path: Path, filt=None):
         name = m[1]
         body = m[2]
         fields = []
-        for field_match in re.finditer(r"^ *((?:\w| )+) (\w+);", body, flags=flags):
+        for field_match in re.finditer(r"^ *((?:\w| )+? \*?)(\w+);", body, flags=flags):
             fields.append(Field(*field_match.groups()))
 
-        structs.append(Struct(name, fields))
+        structs.append(Struct(name, fields, start=m.start()))
     return structs
 
 
@@ -63,7 +65,7 @@ def get_enums(path: Path):
         values = []
         for field_match in re.finditer(r"^ *(\w+)([^/]*?)(.*?)$", body, flags=flags):
             values.append(Value(*field_match.groups()))
-        enums.append(Enum(name, values))
+        enums.append(Enum(name, values, start=m.start()))
     return enums
 
 
@@ -76,7 +78,13 @@ def generate_bindings():
     generated_dir.mkdir(exist_ok=True)
     generated_dir.joinpath("__init__.py").touch()
 
-    structs = get_structs(mytypes)
+    structs = get_structs(mytypes) + get_structs(
+        optix_types,
+        filt=[
+            "OptixDeviceContext",
+            "OptixTransformFormat",
+        ],
+    )
     enums = get_enums(optix_types)
 
     env = Environment(

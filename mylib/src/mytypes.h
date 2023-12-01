@@ -1,9 +1,7 @@
-// #pragma once
-// #include <optix_types.h>
+#include <optix_types.h>
 
 typedef struct MyContext
 {
-    // OptixDeviceContext context;
+    OptixDeviceContext context;
 
-    int context;
 } MyContext;

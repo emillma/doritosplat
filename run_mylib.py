@@ -1,7 +1,7 @@
 import mylib
 
 a = mylib.types.MyContext()
-print(a.context)
+print(a.get_context())
 # a = cpp.
 # vertices = torch.tensor(
 #     [
