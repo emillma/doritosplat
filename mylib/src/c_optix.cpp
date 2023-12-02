@@ -23,17 +23,17 @@ public:
     ptr_wrapper() : ptr(nullptr) {}
     ptr_wrapper(T *ptr) : ptr(ptr) {}
     ptr_wrapper(const ptr_wrapper &other) : ptr(other.ptr) {}
+    void destroy() { delete ptr; }
     T &operator*() const { return *ptr; }
     T *operator->() const { return ptr; }
     T *get() const { return ptr; }
-    void destroy() { delete ptr; }
     T &operator[](std::size_t idx) const { return ptr[idx]; }
 
 private:
     T *ptr;
 };
 
-typedef ptr_wrapper<OptixDeviceContext_t> pyOptixDeviceContext;
+typedef ptr_wrapper<OptixDeviceContext_t> OptixDeviceContext_pyptr;
 
 static void
 context_log_cb(unsigned int level, const char *tag, const char *message, void * /*cbdata */)
@@ -42,7 +42,7 @@ context_log_cb(unsigned int level, const char *tag, const char *message, void * 
               << message << "\n";
 }
 
-pyOptixDeviceContext create_context()
+OptixDeviceContext create_context()
 {
     OptixDeviceContext context = nullptr;
     {
@@ -57,16 +57,21 @@ pyOptixDeviceContext create_context()
     }
     return context;
 }
-void destroy_context(pyOptixDeviceContext context)
+void destroy_context(OptixDeviceContext context)
 {
-    optixDeviceContextDestroy(context.get());
+    optixDeviceContextDestroy(context);
 }
-
 PYBIND11_MODULE(c_optix, m)
 {
-    py::class_<ptr_wrapper<OptixDeviceContext_t>>(m, "OptixDeviceContext")
+    py::class_<OptixDeviceContext_pyptr>(m, "pyOptixDeviceContext")
         .def(py::init<>());
 
-    m.def("create_context", &create_context, py::return_value_policy::take_ownership);
-    m.def("destroy_context", &destroy_context);
+    m.def(
+        "create_context", []()
+        { return OptixDeviceContext_pyptr(create_context()); },
+        py::return_value_policy::take_ownership);
+    m.def(
+        "destroy_context", [](OptixDeviceContext_pyptr context)
+        { return destroy_context(context.get()); },
+        py::return_value_policy::take_ownership);
 }
