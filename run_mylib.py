@@ -1,9 +1,8 @@
 import mylib
 import torch
-from mylib import types
-from mylib.bindings import create_context
+from mylib import structs, enums, c_bindings
 
-ctx = create_context()
+# ctx = create_context()
 
 vertices = torch.tensor(
     [
@@ -14,22 +13,21 @@ vertices = torch.tensor(
     device="cuda",
 )
 
-accel_options = types.OptixAccelBuildOptions(
-    buildFlags=types.OPTIX_BUILD_FLAG_NONE,
-    operation=types.OPTIX_BUILD_OPERATION_BUILD,
+accel_options = structs.OptixAccelBuildOptions(
+    buildFlags=enums.OPTIX_BUILD_FLAG_NONE,
+    operation=enums.OPTIX_BUILD_OPERATION_BUILD,
 )
 
-triangle_input_flags = torch.IntTensor([types.OPTIX_GEOMETRY_FLAG_NONE])
-triangle_input = types.OptixBuildInput(
-    type=types.OPTIX_BUILD_INPUT_TYPE_TRIANGLES,
-    triangleArray=types.OptixBuildInputTriangleArray(
-        vertexFormat=types.OPTIX_VERTEX_FORMAT_FLOAT3,
+triangle_input_flags = torch.IntTensor([enums.OPTIX_GEOMETRY_FLAG_NONE])
+triangle_input = structs.OptixBuildInput(
+    type=enums.OPTIX_BUILD_INPUT_TYPE_TRIANGLES,
+    triangleArray=structs.OptixBuildInputTriangleArray(
+        vertexFormat=enums.OPTIX_VERTEX_FORMAT_FLOAT3,
         numVertices=vertices.shape[0],
         vertexBuffers=vertices.data_ptr(),
         flags=triangle_input_flags.data_ptr(),
         numSbtRecords=1,
     ),
 )
-vertices.data_ptr()
-
+# mylib.cmylib.optixAccelComputeMemoryUsage(ctx)
 # print(mylib.myfunc("hello"))

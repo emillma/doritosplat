@@ -1,0 +1,14 @@
+#include "optix_types.h"
+#include <torch/extension.h>
+
+PYBIND11_MODULE(c_enums, m)
+{
+    {% for e in enums %}
+    py::enum_<{{e.name}}>(m, "{{e.name}}")
+        {% for v in e.values %}
+        .value("{{v.name}}", {{v.name}})
+        {% endfor %}
+        .export_values();
+
+    {% endfor %}
+}
