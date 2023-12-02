@@ -26,10 +26,10 @@ PYBIND11_MODULE(types, m)
             {% endif %}
             "{{f.name}}", 
             [](const {{s.name}} &self)
-                { return (size_t)(self.{{f.name}}); }, 
+                { return ({{f.py_type}})(self.{{f.name}}); }, 
 
             {% if not f.type.startswith('const')%}
-            []({{s.name}} &self, size_t {{f.name}})
+            []({{s.name}} &self, {{f.py_type}} {{f.name}})
                 { self.{{f.name}} = ({{f.type}}){{f.name}}; }, 
             {% endif %}
             py::return_value_policy::reference_internal)

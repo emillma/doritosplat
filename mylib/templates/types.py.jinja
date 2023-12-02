@@ -1,8 +1,18 @@
+from dataclasses import dataclass, field
+from ..bindings import ctypes
 
+class Common:
+    def __new__(cls, **kwargs):
+        obj = getattr(ctypes, cls.__name__)()
+        for k, v in kwargs.items():
+            setattr(obj, k, v)
+        return obj
+        
 {% for s in structs %}
+@dataclass
 class {{ s.name }}(Common): 
     {% for f in s.fields %}
-    {{ f.name }}: '{{ f.type.strip() }}'
+    {{ f.name }}: '{{ f.type.strip() }}' = 0
     {% endfor %}
 
 {% endfor %}

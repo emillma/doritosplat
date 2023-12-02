@@ -17,7 +17,11 @@
         "atomic": "cpp",
         "stdexcept": "cpp",
         "bitset": "cpp",
-        "type_traits": "cpp"
+        "type_traits": "cpp",
+        "string": "cpp",
+        "string_view": "cpp",
+        "iterator": "cpp",
+        "vector": "cpp"
     },
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#ff6433",

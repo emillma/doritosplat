@@ -1,19 +1,18 @@
 import mylib
+import torch
+from mylib import types
+from mylib.bindings import create_context
 
-a = mylib.ctypes.MyContext()
+ctx = create_context()
 
-a = mylib.types.MyContext()
-# a = mylib.types.MyContext()
-a.context = 2
-print(a.context)
-# a = cpp.
-# vertices = torch.tensor(
-#     [
-#         [-0.5, -0.5, 0],
-#         [0.5, -0.5, 0],
-#         [0.0, 0.5, 0],
-#     ],
-#     device="cuda",
-# )
+vertices = torch.tensor(
+    [
+        [-0.5, -0.5, 0],
+        [0.5, -0.5, 0],
+        [0.0, 0.5, 0],
+    ],
+    device="cuda",
+)
+vertices.data_ptr()
 
 # print(mylib.myfunc("hello"))

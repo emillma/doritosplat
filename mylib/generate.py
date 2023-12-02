@@ -1,5 +1,6 @@
 import re
 from pathlib import Path
+from typing import Any
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from dataclasses import dataclass, field
 
@@ -10,6 +11,14 @@ flags = re.DOTALL | re.MULTILINE
 class Field:
     type: str
     name: str
+    py_type: str = field(init=False)
+
+    def __post_init__(self):
+        pointer_types = ["OptixDeviceContext"]
+        if self.type in pointer_types:
+            self.py_type = f"size_t"
+        else:
+            self.py_type = self.type
 
 
 @dataclass
@@ -48,7 +57,9 @@ def get_structs(path: Path, filt=None):
         name = m[1]
         body = m[2]
         fields = []
-        for field_match in re.finditer(r"^ *((?:\w| )+? \*?)(\w+);", body, flags=flags):
+        for field_match in re.finditer(
+            r"^ *([a-zA-Z0-9 _]+?(?: \*)?) *(\w+);", body, flags=flags
+        ):
             fields.append(Field(*field_match.groups()))
 
         structs.append(Struct(name, fields, start=m.start()))
@@ -81,8 +92,9 @@ def generate_bindings():
     structs = get_structs(mytypes) + get_structs(
         optix_types,
         filt=[
-            "OptixDeviceContext",
-            "OptixTransformFormat",
+            # "OptixDisplacementMicromapUsageCount",
+            "OptixAccelBuildOptions",
+            "OptixMotionOptions",
         ],
     )
     enums = get_enums(optix_types)
