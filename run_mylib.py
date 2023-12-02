@@ -31,7 +31,7 @@ triangle_input = structs.OptixBuildInput(
     ),
 )
 a = 10
-context = mylib.c_stubs()
+context = mylib.stubs.optixInit()
 # stubs.optixAccelComputeMemoryUsage(
 # mylib.cmylib.optixAccelComputeMemoryUsage(ctx)
 # print(mylib.myfunc("hello"))

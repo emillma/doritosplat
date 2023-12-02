@@ -14,7 +14,7 @@
 #include <iostream>
 #include <iomanip>
 #include <torch/extension.h>
-#include "mytypes.h"
+#include "my_types.h"
 static void context_log_cb(unsigned int level, const char *tag, const char *message, void * /*cbdata */)
 {
     std::cerr << "[" << std::setw(2) << level << "][" << std::setw(12) << tag << "]: "

@@ -13,7 +13,7 @@ class Argument:
 
     def __post_init__(self):
         if any(t in self.type for t in pointer_types) or "*" in self.type:
-            self.py_type = f"size_t"
+            self.py_type = f"Pointer"
         else:
             self.py_type = self.type
 
@@ -28,12 +28,13 @@ class Function:
         return ", ".join([f"{arg.py_type} {arg.name}" for arg in self.args])
 
     def c_py2c_arg_string(self):
-        return ", ".join(
-            [
-                f"({arg.type}){arg.name}" if arg.type != arg.py_type else arg.name
-                for arg in self.args
-            ]
-        )
+        argstrings = []
+        for arg in self.args:
+            if arg.py_type == "Pointer":
+                argstrings.append(f"({arg.type}){arg.name}.ptr")
+            else:
+                argstrings.append(f"{arg.name}")
+        return ", ".join(argstrings)
 
     def c_tuple_input(self):
         return ", ".join(["rv"] + [f"{arg.name}" for arg in self.args])
@@ -42,12 +43,13 @@ class Function:
         return ", ".join([f"{arg.name}" for arg in self.args])
 
     def py_args_annotated(self):
-        return ", ".join(
-            [
-                f'{arg.name}:"{arg.type}{f"({arg.py_type})" if arg.type != arg.py_type else ""}"'
-                for arg in self.args
-            ]
-        )
+        argstrings = []
+        for arg in self.args:
+            if arg.py_type == "Pointer":
+                argstrings.append(f"{arg.name}: 'structs.Pointer[{arg.type}]'")
+            else:
+                argstrings.append(f"{arg.name}: '{arg.type}'")
+        return ", ".join(argstrings)
 
 
 def get_stubs(text: str):

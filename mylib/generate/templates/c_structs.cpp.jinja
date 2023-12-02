@@ -1,6 +1,6 @@
-#include "optix_types.h"
+#include <optix_types.h>
+#include "my_types.h"
 #include <torch/extension.h>
-
 PYBIND11_MODULE(c_structs, m)
 {
     {% for s in structs %}

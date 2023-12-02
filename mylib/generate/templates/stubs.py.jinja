@@ -1,4 +1,5 @@
 from ..c_bindings import c_stubs
+from . import structs
 
 {% for s in stubs %}
 def {{s.name}}({{s.py_args_annotated()}}):
