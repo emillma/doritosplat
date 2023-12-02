@@ -1,6 +1,9 @@
 from pathlib import Path
 from mylib.lib_loader import load_lib
-from .generated import types
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .generated import types
 
 
 def sources(path: Path):
@@ -16,5 +19,5 @@ ctypes = load_lib("types", sources(mylib_dir / "generated"))
 cmylib = load_lib("cmylib", mylib_dir / "src")
 
 
-def create_context() -> types.MyContext:
+def create_context() -> "types.MyContext":
     return cmylib.create_context()

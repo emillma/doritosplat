@@ -20,7 +20,11 @@ class {{ s.name }}(Common):
 {% for e in enums %}
 class {{ e.name }}:
     {% for v in e.values %}
-    {{ v.name }}: int
+    {{ v.name }} = ctypes.{{ e.name }}.{{ v.name }}
     {% endfor %}
+
+{% for v in e.values %}
+{{ v.name }} = {{e.name}}.{{ v.name }}
+{% endfor %}
 
 {% endfor %}

@@ -19,7 +19,7 @@ PYBIND11_MODULE(types, m)
         .def(py::init<>())
         {% for f in s.fields %}
 
-            {% if f.type.startswith('const')%}
+            {% if f.is_const%}
             .def_property_readonly(
             {% else %}
             .def_property(
@@ -28,7 +28,7 @@ PYBIND11_MODULE(types, m)
             [](const {{s.name}} &self)
                 { return ({{f.py_type}})(self.{{f.name}}); }, 
 
-            {% if not f.type.startswith('const')%}
+            {% if not f.is_const%}
             []({{s.name}} &self, {{f.py_type}} {{f.name}})
                 { self.{{f.name}} = ({{f.type}}){{f.name}}; }, 
             {% endif %}

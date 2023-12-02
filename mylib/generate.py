@@ -12,10 +12,11 @@ class Field:
     type: str
     name: str
     py_type: str = field(init=False)
+    is_const: bool = False
 
     def __post_init__(self):
         pointer_types = ["OptixDeviceContext"]
-        if self.type in pointer_types:
+        if self.type in pointer_types or self.type.endswith("*"):
             self.py_type = f"size_t"
         else:
             self.py_type = self.type
@@ -95,6 +96,8 @@ def generate_bindings():
             # "OptixDisplacementMicromapUsageCount",
             "OptixAccelBuildOptions",
             "OptixMotionOptions",
+            "OptixBuildInput",
+            "OptixBuildInputTriangleArray",
         ],
     )
     enums = get_enums(optix_types)
