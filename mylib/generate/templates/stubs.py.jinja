@@ -1,0 +1,6 @@
+from ..c_bindings import c_stubs
+
+{% for s in stubs %}
+def {{s.name}}({{s.py_args_annotated()}}):
+    return c_stubs.{{s.name}}({{s.py_args()}})
+{% endfor%}

@@ -1,6 +1,7 @@
 import mylib
 import torch
-from mylib import structs, enums, c_bindings
+from mylib import structs, enums, c_bindings, stubs
+import ctypes
 
 # ctx = create_context()
 
@@ -29,5 +30,7 @@ triangle_input = structs.OptixBuildInput(
         numSbtRecords=1,
     ),
 )
+a = 10
+stubs.optixProgramGroupCreate()
 # mylib.cmylib.optixAccelComputeMemoryUsage(ctx)
 # print(mylib.myfunc("hello"))

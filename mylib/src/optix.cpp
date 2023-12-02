@@ -36,7 +36,16 @@ size_t create_context()
     }
     return (size_t)context;
 }
+
+void change_int(int &a)
+{
+    a = 100;
+}
+
 PYBIND11_MODULE(c_optix, m)
 {
     m.def("create_context", &create_context);
+    m.def("change_int", &change_int);
+    m.def("change_int", [](int i)
+          { change_int(i); return std::make_tuple(i); });
 }

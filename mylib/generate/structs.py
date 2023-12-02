@@ -1,17 +1,11 @@
 from pathlib import Path
 from dataclasses import dataclass, field
 import re
+from .utils import pointer_types
 
 flags = re.DOTALL | re.MULTILINE
 
-pointer_types = [
-    "OptixDeviceContext",
-    "OptixModule",
-    "OptixProgramGroup",
-    "OptixPipeline",
-    "OptixDenoiser",
-    "OptixTask",
-]
+
 ignore_types = [
     "OptixLogCallback",
 ]
@@ -43,9 +37,9 @@ class Struct:
     start: int = 0
 
 
-def get_structs(text: str, filt=None):
-    filt = filt or []
+def get_structs(text: str):
     struc_pat = re.compile(r"^typedef struct (\w+)\n?{\n?(.*?)\n} \1;", flags)
+    field_pat = re.compile(r"^ *([a-zA-Z0-9 _\*]+?)(\w+);", flags)
     structs = []
 
     for m in struc_pat.finditer(text):
@@ -54,10 +48,8 @@ def get_structs(text: str, filt=None):
         if name in ignore_structs:
             continue
         fields = []
-        for field_match in re.finditer(
-            r"^ *([a-zA-Z0-9 _]+?(?: \*)?) *(\w+);", body, flags=flags
-        ):
-            field_type = field_match[1]
+        for field_match in field_pat.finditer(body):
+            field_type = field_match[1].strip()
             field_name = field_match[2]
             if field_type in ignore_types:
                 continue

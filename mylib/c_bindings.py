@@ -23,7 +23,7 @@ c_enums = load_lib("c_enums", [generated_dir / "c_enums.cpp"])
 
 
 # c_stubs = load_lib("c_stubs", [generated_dir / "stubs.cpp"])
-# c_optix = load_lib("c_optix", [src_dir / "optix.cpp"])
+c_optix = load_lib("c_optix", [src_dir / "optix.cpp"])
 
 
 # def create_context() -> "types.MyContext":
