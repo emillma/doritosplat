@@ -3,5 +3,4 @@
 typedef struct Pointer
 {
     size_t ptr;
-
 } Pointer;

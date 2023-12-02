@@ -1,8 +1,9 @@
 from pathlib import Path
 import re
-from .structs import get_structs
-from .enums import get_enums
-from .stubs import get_stubs
+from .gen_structs import get_structs
+from .gen_enums import get_enums
+from .gen_stubs import get_stubs
+from .utils import ptr_types, ptr_types_inv
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 
@@ -35,13 +36,9 @@ def generate_bindings():
     enums = get_enums(optix_types.read_text())
     stubs = get_stubs(stubs.read_text())
 
-    struct_filter = [
-        "OptixAccelBuildOptions",
-        "OptixMotionOptions",
-        "OptixBuildInput",
-        "OptixBuildInputTriangleArray",
-        "OptixAccelBufferSizes",
-    ]
+    types = set()
+    types.update([f.type for s in structs for f in s.fields])
+    types.update([a.type for s in stubs for a in s.args])
 
     env = Environment(
         loader=FileSystemLoader(template_dir),

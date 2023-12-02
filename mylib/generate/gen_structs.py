@@ -19,7 +19,7 @@ class Field:
     is_const: bool = False
 
     def __post_init__(self):
-        if self.type in pointer_types or self.type.endswith("*"):
+        if self.type in pointer_types or "*" in self.type:
             self.py_type = f"size_t"
         else:
             self.py_type = self.type

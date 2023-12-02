@@ -15,13 +15,34 @@
 #include <iomanip>
 #include <torch/extension.h>
 #include "my_types.h"
-static void context_log_cb(unsigned int level, const char *tag, const char *message, void * /*cbdata */)
+
+template <class T>
+class ptr_wrapper
+{
+public:
+    ptr_wrapper() : ptr(nullptr) {}
+    ptr_wrapper(T *ptr) : ptr(ptr) {}
+    ptr_wrapper(const ptr_wrapper &other) : ptr(other.ptr) {}
+    T &operator*() const { return *ptr; }
+    T *operator->() const { return ptr; }
+    T *get() const { return ptr; }
+    void destroy() { delete ptr; }
+    T &operator[](std::size_t idx) const { return ptr[idx]; }
+
+private:
+    T *ptr;
+};
+
+typedef ptr_wrapper<OptixDeviceContext_t> pyOptixDeviceContext;
+
+static void
+context_log_cb(unsigned int level, const char *tag, const char *message, void * /*cbdata */)
 {
     std::cerr << "[" << std::setw(2) << level << "][" << std::setw(12) << tag << "]: "
               << message << "\n";
 }
 
-size_t create_context()
+pyOptixDeviceContext create_context()
 {
     OptixDeviceContext context = nullptr;
     {
@@ -34,10 +55,18 @@ size_t create_context()
         options.logCallbackLevel = 4;
         OPTIX_CHECK(optixDeviceContextCreate(cuda_context, &options, &context));
     }
-    return (size_t)context;
+    return context;
+}
+void destroy_context(pyOptixDeviceContext context)
+{
+    optixDeviceContextDestroy(context.get());
 }
 
 PYBIND11_MODULE(c_optix, m)
 {
-    m.def("create_context", &create_context);
+    py::class_<ptr_wrapper<OptixDeviceContext_t>>(m, "OptixDeviceContext")
+        .def(py::init<>());
+
+    m.def("create_context", &create_context, py::return_value_policy::take_ownership);
+    m.def("destroy_context", &destroy_context);
 }

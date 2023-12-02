@@ -22,7 +22,9 @@ PYBIND11_MODULE(c_structs, m)
                 { self.{{f.name}} = ({{f.type}}){{f.name}}; }, 
             {% endif %}
             py::return_value_policy::reference_internal)
+
         {% endfor %}
+        .def("to_ptr", [](const {{s.name}} &self) { return (Pointer){(uint64_t)&self};}, py::return_value_policy::take_ownership)
         ;
     {% endfor %}
 }
