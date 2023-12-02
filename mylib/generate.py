@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from dataclasses import dataclass, field
 
 flags = re.DOTALL | re.MULTILINE
@@ -91,6 +91,7 @@ def generate_bindings():
         loader=FileSystemLoader(template_dir),
         trim_blocks=True,
         lstrip_blocks=True,
+        undefined=StrictUndefined,
     )
 
     for fname in ["type_bindings.cpp.jinja", "types.py.jinja"]:

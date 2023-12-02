@@ -2,6 +2,7 @@
 #include "mytypes.h"
 
 #include <torch/extension.h>
+
 PYBIND11_MODULE(types, m)
 {
     {% for e in enums %}
@@ -17,13 +18,22 @@ PYBIND11_MODULE(types, m)
     py::class_<{{s.name}}>(m, "{{s.name}}")
         .def(py::init<>())
         {% for f in s.fields %}
-            {% if f.type.startswith('const') %}
-                .def_readonly("{{f.name}}", &{{s.name}}::{{f.name}})
+
+            {% if f.type.startswith('const')%}
+            .def_property_readonly(
             {% else %}
-                .def_readwrite("{{f.name}}", &{{s.name}}::{{f.name}})
+            .def_property(
             {% endif %}
-        {% endfor %};
+            "{{f.name}}", 
+            [](const {{s.name}} &self)
+                { return (size_t)(self.{{f.name}}); }, 
 
+            {% if not f.type.startswith('const')%}
+            []({{s.name}} &self, size_t {{f.name}})
+                { self.{{f.name}} = ({{f.type}}){{f.name}}; }, 
+            {% endif %}
+            py::return_value_policy::reference_internal)
+        {% endfor %}
+        ;
     {% endfor %}
-
 }
