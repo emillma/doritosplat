@@ -1,14 +1,10 @@
 from pathlib import Path
 from dataclasses import dataclass, field
 import re
-from .utils import pointer_types
+from .utils import pointer_types, ignore_types
 
 flags = re.DOTALL | re.MULTILINE
 
-
-ignore_types = [
-    "OptixLogCallback",
-]
 ignore_structs = [
     "OptixInvalidRayExceptionDetails",
     "OptixParameterMismatchExceptionDetails",

@@ -29,3 +29,4 @@ pointer_types = [
     "CUmemoryPool",
     "CUuserObject",
 ]
+ignore_types = ["OptixLogCallback"]

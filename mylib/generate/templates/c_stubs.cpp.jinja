@@ -1,12 +1,15 @@
+#include "optix_types.h"
 #include "optix_stubs.h"
+#include "optix_function_table_definition.h"
+
 #include <torch/extension.h>
 
-PYBIND11_MODULE(types, m)
+PYBIND11_MODULE(c_stubs, m)
 {
     {% for s in stubs%}
     {% if s.return_type != "void" %}
     m.def("{{s.name}}", []({{s.c_py_arg_string()}}) { {{s.return_type}} rv = {{s.name}}({{s.c_py2c_arg_string()}}); 
-                                                     return std::make_tuple(rv, {{ s.c_tuple_input()}}); });
+                                                     return std::make_tuple({{ s.c_tuple_input()}}); });
     {% endif %}
     {% endfor %}
 }

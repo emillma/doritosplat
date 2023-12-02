@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 import re
-from .utils import pointer_types
+from .utils import pointer_types, ignore_types
 
 flags = re.DOTALL | re.MULTILINE
 
@@ -12,7 +12,7 @@ class Argument:
     py_type: str = field(init=False)
 
     def __post_init__(self):
-        if self.type in pointer_types or self.type.endswith("*"):
+        if any(t in self.type for t in pointer_types) or "*" in self.type:
             self.py_type = f"size_t"
         else:
             self.py_type = self.type
@@ -36,7 +36,7 @@ class Function:
         )
 
     def c_tuple_input(self):
-        return ", ".join([f"{arg.name}" for arg in self.args])
+        return ", ".join(["rv"] + [f"{arg.name}" for arg in self.args])
 
     def py_args(self):
         return ", ".join([f"{arg.name}" for arg in self.args])
@@ -58,12 +58,18 @@ def get_stubs(text: str):
         name = stub[1]
         arg_string = stub[2]
         args = []
+        skip = False
         for arg in arg_string.replace("\n", "").split(","):
             if arg == "void":
                 continue
             m = arg_pat.match(arg)
             arg_type = m[1].strip()
             arg_name = m[2].strip()
+            if arg_type in ignore_types:
+                skip = True
+                break
             args.append(Argument(arg_type, arg_name))
+        if skip:
+            continue
         functions.append(Function(name, args, "OptixResult"))
     return functions
