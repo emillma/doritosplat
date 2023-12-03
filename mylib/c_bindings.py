@@ -20,7 +20,8 @@ mylib_dir = Path(__file__).parent
 
 c_structs = load_lib("c_structs", [generated_dir / "c_structs.cpp"])
 c_enums = load_lib("c_enums", [generated_dir / "c_enums.cpp"])
-c_stubs = load_lib("c_stubs", [generated_dir / "c_stubs.cpp"])
+# c_stubs = load_lib("c_stubs", [generated_dir / "c_stubs.cpp"])
+# c_pointers = load_lib("c_pointers", [generated_dir / "c_pointers.cpp"])
 c_optix = load_lib("c_optix", [src_dir / "c_optix.cpp"])
 
 

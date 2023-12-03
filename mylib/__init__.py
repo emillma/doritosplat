@@ -6,4 +6,4 @@ from .generate.generate import generate_bindings
 generate_bindings()
 
 from . import c_bindings
-from .generated import structs, enums, stubs
+from .generated import structs, enums

@@ -15,14 +15,7 @@ ignore_structs = [
 class Field:
     type: str
     name: str
-    py_type: str = field(init=False)
     is_const: bool = False
-
-    def __post_init__(self):
-        if self.type in pointer_types or "*" in self.type:
-            self.py_type = f"size_t"
-        else:
-            self.py_type = self.type
 
 
 @dataclass

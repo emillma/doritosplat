@@ -19,7 +19,7 @@ class Common:
 @dataclass
 class {{ s.name }}(Common): 
     {% for f in s.fields %}
-    {{ f.name }}: '{{ f.type.strip() }}' = field(default=0)
+    {{ f.name }}: '{{ f.type}}' = field(default=0)
     {% endfor %}
     {% if not s.fields %}
     ...

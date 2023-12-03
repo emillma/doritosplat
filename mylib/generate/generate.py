@@ -3,7 +3,7 @@ import re
 from .gen_structs import get_structs
 from .gen_enums import get_enums
 from .gen_stubs import get_stubs
-from .utils import ptr_types, ptr_types_inv
+from .gen_pointers import get_pointers, c2py, py2c, pyargs, callargs, pytype, ptr_name
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 
@@ -35,10 +35,7 @@ def generate_bindings():
     structs = get_structs(optix_types.read_text()) + get_structs(my_types.read_text())
     enums = get_enums(optix_types.read_text())
     stubs = get_stubs(stubs.read_text())
-
-    types = set()
-    types.update([f.type for s in structs for f in s.fields])
-    types.update([a.type for s in stubs for a in s.args])
+    ptr_types = get_pointers(stubs)
 
     env = Environment(
         loader=FileSystemLoader(template_dir),
@@ -47,8 +44,19 @@ def generate_bindings():
         undefined=StrictUndefined,
     )
 
-    params = dict(structs=structs, enums=enums, stubs=stubs)
-    for thing in ["structs", "enums", "stubs"]:
+    params = dict(
+        structs=structs,
+        enums=enums,
+        stubs=stubs,
+        ptr_types=ptr_types,
+        c2py=c2py,
+        py2c=py2c,
+        pyargs=pyargs,
+        callargs=callargs,
+        pytype=pytype,
+        ptr_name=ptr_name,
+    )
+    for thing in ["structs", "enums", "stubs", "pointers"]:
         for ftype in ["cpp", "py"]:
             fname = f"{'c_' if ftype=='cpp' else ''}{thing}.{ftype}.jinja"
             out_text = env.get_template(fname).render(params)

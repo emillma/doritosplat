@@ -1,30 +1,27 @@
 #include <optix_types.h>
 #include "my_types.h"
 #include <torch/extension.h>
+#include "c_ptr_types.h"
+
 PYBIND11_MODULE(c_structs, m)
 {
     {% for s in structs %}
     py::class_<{{s.name}}>(m, "{{s.name}}")
         .def(py::init<>())
         {% for f in s.fields %}
-
-            {% if f.is_const%}
-            .def_property_readonly(
-            {% else %}
             .def_property(
-            {% endif %}
             "{{f.name}}", 
-            [](const {{s.name}} &self)
-                { return ({{f.py_type}})(self.{{f.name}}); }, 
 
-            {% if not f.is_const%}
-            []({{s.name}} &self, {{f.py_type}} {{f.name}})
-                { self.{{f.name}} = ({{f.type}}){{f.name}}; }, 
-            {% endif %}
+            [](const {{s.name}} &self)
+                { return {{c2py(f.type, 'self.'+f.name)}}; }, 
+
+            []({{s.name}} &self, {{pytype(f.type)}} {{f.name}})
+                { self.{{f.name}} = {{py2c(f.type, f.name)}}; }, 
+
             py::return_value_policy::reference_internal)
 
         {% endfor %}
-        .def("to_ptr", [](const {{s.name}} &self) { return (Pointer){(uint64_t)&self};}, py::return_value_policy::take_ownership)
+        .def("to_ptr", []({{s.name}} &self) { return ptr_wrapper<{{s.name}}>(&self);}, py::return_value_policy::take_ownership)
         ;
     {% endfor %}
 }

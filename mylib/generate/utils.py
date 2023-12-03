@@ -4,35 +4,37 @@
 ignore_types = ["OptixLogCallback"]
 
 optix_ptr_types = {
-    "OptixDeviceContext_t": "OptixDeviceContext",
-    "OptixModule_t": "OptixModule",
-    "OptixProgramGroup_t": "OptixProgramGroup",
-    "OptixPipeline_t": "OptixPipeline",
-    "OptixDenoiser_t": "OptixDenoiser",
-    "OptixTask_t": "OptixTask",
+    "OptixDeviceContext": "OptixDeviceContext_t *",
+    "OptixModule": "OptixModule_t *",
+    "OptixProgramGroup": "OptixProgramGroup_t *",
+    "OptixPipeline": "OptixPipeline_t *",
+    "OptixDenoiser": "OptixDenoiser_t *",
+    "OptixTask": "OptixTask_t *",
 }
 cuda_ptr_types = {
-    "CUctx_st": "CUcontext",
-    "CUmod_st": "CUmodule",
-    "CUfunc_st": "CUfunction",
-    "CUlib_st": "CUlibrary",
-    "CUkern_st": "CUkernel",
-    "CUarray_st": "CUarray",
-    "CUmipmappedArray_st": "CUmipmappedArray",
-    "CUtexref_st": "CUtexref",
-    "CUsurfref_st": "CUsurfref",
-    "CUevent_st": "CUevent",
-    "CUstream_st": "CUstream",
-    "CUgraphicsResource_st": "CUgraphicsResource",
-    "CUextMemory_st": "CUexternalMemory",
-    "CUextSemaphore_st": "CUexternalSemaphore",
-    "CUgraph_st": "CUgraph",
-    "CUgraphNode_st": "CUgraphNode",
-    "CUgraphExec_st": "CUgraphExec",
-    "CUmemPoolHandle_st": "CUmemoryPool",
-    "CUuserObject_st": "CUuserObject",
+    "CUcontext": "CUctx_st *",
+    "CUmodule": "CUmod_st *",
+    "CUfunction": "CUfunc_st *",
+    "CUlibrary": "CUlib_st *",
+    "CUkernel": "CUkern_st *",
+    "CUarray": "CUarray_st *",
+    "CUmipmappedArray": "CUmipmappedArray_st *",
+    "CUtexref": "CUtexref_st *",
+    "CUsurfref": "CUsurfref_st *",
+    "CUevent": "CUevent_st *",
+    "CUstream": "CUstream_st *",
+    "CUgraphicsResource": "CUgraphicsResource_st *",
+    "CUexternalMemory": "CUextMemory_st *",
+    "CUexternalSemaphore": "CUextSemaphore_st *",
+    "CUgraph": "CUgraph_st *",
+    "CUgraphNode": "CUgraphNode_st *",
+    "CUgraphExec": "CUgraphExec_st *",
+    "CUmemoryPool": "CUmemPoolHandle_st *",
+    "CUuserObject": "CUuserObject_st *",
 }
-ptr_types = {**optix_ptr_types, **cuda_ptr_types}
-ptr_types_inv = {v: k for k, v in ptr_types.items()}
 
-pointer_types = [v for v in ptr_types.values()]
+ptr_typedefs = optix_ptr_types | cuda_ptr_types
+for k, v in list(ptr_typedefs.items()):
+    ptr_typedefs[f"const {k}"] = f"{v} const"
+
+pointer_types = list(ptr_typedefs.keys())
