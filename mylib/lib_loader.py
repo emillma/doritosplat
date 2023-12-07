@@ -3,6 +3,7 @@ from pathlib import Path
 from torch.utils import cpp_extension
 import jsonc
 from subprocess import run
+import tempfile
 
 cwd = Path.cwd()
 props = jsonc.loads((cwd / ".vscode/c_cpp_properties.json").read_text())
@@ -34,15 +35,27 @@ def load_lib(name: str, sources: Path):
     return module
 
 
-def ptx(path: Path, out: Path):
-    out.parent.mkdir(exist_ok=True, parents=True)
-    ptx_args = [
-        "nvcc",
-        # "--cudart=static",
-        "--ptx",
-        *("-I" + str(p) for p in include_dirs),
-        "-o",
-        str(out),
-        str(path),
-    ]
-    run(ptx_args, check=True)
+def get_optixir(path: Path, debug=False):
+    extra = (
+        ["-G", "--generate-line-info", "debugLevel=OPTIX_COMPILE_DEBUG_LEVEL_MODERATE"]
+        if debug
+        else []
+    )
+    with tempfile.NamedTemporaryFile(suffix=".optixir") as fp:
+        ptx_args = [
+            "nvcc",
+            "-optix-ir",
+            "--use_fast_math",
+            "--machine=64",
+            "--relocatable-device-code=true",
+            "--keep-device-functions",
+            *extra,
+            *("-I" + str(p) for p in include_dirs),
+            str(path),
+            "-o",
+            fp.name,
+        ]
+
+        run(ptx_args, check=True)
+        data = fp.read()
+    return data

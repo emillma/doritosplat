@@ -102,6 +102,64 @@ public:
     };
 };
 
+class Module
+{
+    OptixDeviceContext context;
+
+    OptixModule module = {};
+    OptixModuleCompileOptions module_compile_options = {};
+    OptixPipelineCompileOptions pipeline_compile_options = {};
+
+    OptixProgramGroupOptions program_group_options = {};
+    std::array<OptixProgramGroupDesc, 3> program_group_descriptions = {};
+    std::array<OptixProgramGroup, 3> program_groups = {nullptr};
+
+public:
+    Module(Context &context) : context(context.get_context())
+    {
+        module_compile_options.optLevel = OPTIX_COMPILE_OPTIMIZATION_LEVEL_0;
+        module_compile_options.debugLevel = OPTIX_COMPILE_DEBUG_LEVEL_FULL;
+
+        pipeline_compile_options.usesMotionBlur = false;
+        pipeline_compile_options.traversableGraphFlags = OPTIX_TRAVERSABLE_GRAPH_FLAG_ALLOW_SINGLE_GAS;
+        pipeline_compile_options.numPayloadValues = 3;
+        pipeline_compile_options.numAttributeValues = 3;
+        pipeline_compile_options.exceptionFlags = OPTIX_EXCEPTION_FLAG_NONE;
+        pipeline_compile_options.pipelineLaunchParamsVariableName = "params";
+        pipeline_compile_options.usesPrimitiveTypeFlags = OPTIX_PRIMITIVE_TYPE_FLAGS_TRIANGLE;
+    };
+
+    void load(std::string ptx_source)
+    {
+
+        OPTIX_CHECK_LOG(optixModuleCreate(
+            context,
+            &module_compile_options,
+            &pipeline_compile_options,
+            ptx_source.c_str(),
+            ptx_source.size(),
+            LOG,
+            &LOG_SIZE,
+            &module));
+
+        program_group_descriptions[0] = {
+            .kind = OPTIX_PROGRAM_GROUP_KIND_RAYGEN, .raygen = {.module = module, .entryFunctionName = "__raygen__rg"}};
+        program_group_descriptions[1] = {
+            .kind = OPTIX_PROGRAM_GROUP_KIND_MISS, .miss = {.module = module, .entryFunctionName = "__miss__ms"}};
+        program_group_descriptions[2] = {
+            .kind = OPTIX_PROGRAM_GROUP_KIND_HITGROUP, .hitgroup = {.moduleCH = module, .entryFunctionNameCH = "__closesthit__ch"}};
+
+        OPTIX_CHECK_LOG(optixProgramGroupCreate(
+            context,
+            program_group_descriptions.data(),
+            (uint32_t)program_group_descriptions.size(),
+            &program_group_options,
+            LOG,
+            &LOG_SIZE,
+            program_groups.data()));
+    };
+};
+
 PYBIND11_MODULE(c_optix, m)
 {
 
@@ -113,4 +171,8 @@ PYBIND11_MODULE(c_optix, m)
         .def("set_vertex_pointer", &Scene::set_vertex_pointer)
         .def("build", &Scene::build)
         .def_property_readonly("triangle_input", &Scene::get_triangle_input);
+
+    py::class_<Module>(m, "Module")
+        .def(py::init<Context &>())
+        .def("load", &Module::load);
 }
