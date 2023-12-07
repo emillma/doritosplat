@@ -30,9 +30,9 @@ def generate_bindings():
 
     optix_types = Path("mylib/include/optix/optix_types.h")
     stubs = Path("mylib/include/optix/optix_stubs.h")
-    my_types = Path("mylib/src/my_types.h")
+    # my_types = Path("mylib/src/my_types.h")
 
-    structs = get_structs(optix_types.read_text()) + get_structs(my_types.read_text())
+    structs = get_structs(optix_types.read_text())
     enums = get_enums(optix_types.read_text())
     stubs = get_stubs(stubs.read_text())
     ptr_types = get_pointers(stubs)
@@ -56,7 +56,7 @@ def generate_bindings():
         pytype=pytype,
         ptr_name=ptr_name,
     )
-    for thing in ["structs", "enums", "stubs", "pointers"]:
+    for thing in ["structs", "enums"]:
         for ftype in ["cpp", "py"]:
             fname = f"{'c_' if ftype=='cpp' else ''}{thing}.{ftype}.jinja"
             out_text = env.get_template(fname).render(params)
