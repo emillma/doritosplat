@@ -4,6 +4,7 @@ from torch.utils import cpp_extension
 import jsonc
 from subprocess import run
 import tempfile
+import sys
 
 cwd = Path.cwd()
 props = jsonc.loads((cwd / ".vscode/c_cpp_properties.json").read_text())
@@ -18,20 +19,23 @@ def load_lib(name: str, sources: Path):
 
     build_dir = Path(__file__).parent / "build"
     build_dir.mkdir(exist_ok=True, parents=True)
-    module = cpp_extension.load(
-        name=name,
-        sources=[str(s) for s in sources],
-        build_directory=str(build_dir),
-        verbose=True,
-        extra_include_paths=[str(p) for p in include_dirs],
-        with_cuda=True,
-        extra_cuda_cflags=[
-            "-arch=sm_89",
-            "--use_fast_math",
-            "--ptxas-options=-v",
-        ],
-    )
-
+    try:
+        module = cpp_extension.load(
+            name=name,
+            sources=[str(s) for s in sources],
+            build_directory=str(build_dir),
+            verbose=True,
+            extra_include_paths=[str(p) for p in include_dirs],
+            with_cuda=True,
+            extra_cuda_cflags=[
+                "-arch=sm_89",
+                "--use_fast_math",
+                "--ptxas-options=-v",
+            ],
+        )
+    except Exception as e:
+        # print(e)
+        sys.exit(0)
     return module
 
 
