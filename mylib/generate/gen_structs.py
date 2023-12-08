@@ -22,6 +22,7 @@ available_types = [
     "float",
     "double",
     "CUdeviceptr",
+    "OptixTraversableHandle",
 ]
 
 

@@ -20,14 +20,7 @@ mylib_dir = Path(__file__).parent
 
 c_optix = load_lib(
     "c_optix",
-    [
-        src_dir / "context.cpp",
-        src_dir / "scene.cpp",
-        src_dir / "module.cpp",
-        src_dir / "c_optix.cpp",
-        generated_dir / "enums.cpp",
-        generated_dir / "structs.cpp",
-    ],
+    list(src_dir.glob("*.cpp")) + list(generated_dir.glob("*.cpp")),
 )
 # c_stubs = load_lib("c_stubs", [generated_dir / "c_stubs.cpp"])
 # c_pointers = load_lib("c_pointers", [generated_dir / "c_pointers.cpp"])

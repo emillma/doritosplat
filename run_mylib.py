@@ -1,5 +1,5 @@
 import torch
-from mylib import structs, enums
+from mylib import optix_structs, enums
 from mylib.lib_loader import get_optixir
 from mylib.c_bindings import c_optix
 
@@ -19,7 +19,7 @@ assert vertices.data_ptr() % 64 == 0
 context = c_optix.Context()
 
 scene = c_optix.Scene(context)
-sizes: structs.OptixAccelBufferSizes = scene.set_vertex_pointer(vertices)
+sizes: optix_structs.OptixAccelBufferSizes = scene.set_vertex_pointer(vertices)
 tmp = torch.empty(sizes.tempSizeInBytes, dtype=torch.uint8, device="cuda")
 bvh = torch.empty(sizes.outputSizeInBytes, dtype=torch.uint8, device="cuda")
 scene.build(tmp, bvh)

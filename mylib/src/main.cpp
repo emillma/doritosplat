@@ -19,8 +19,8 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m)
     bind_scene(m);
     bind_module(m);
 
-    m.def("sizeof_size_t", []()
-          { return sizeof(size_t); });
+    m.def("sizeof_OptixTraversableHandle", []()
+          { return sizeof(OptixTraversableHandle); });
     // py::class_<Context>(m, "Context")
     //     .def(py::init<>());
 
