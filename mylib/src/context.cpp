@@ -1,8 +1,8 @@
-#include <optix.h>
-#include <optix_stubs.h>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
 
+#include <optix_stubs.h>
+#include <sutil/Exception.h>
 // #include "optix_function_table.h"
 
 #include "context.h"

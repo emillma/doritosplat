@@ -25,7 +25,7 @@ c_optix = load_lib(
     [
         src_dir / "context.cpp",
         src_dir / "scene.cpp",
-        # src_dir / "module.cpp",
+        src_dir / "module.cpp",
         src_dir / "c_optix.cpp",
     ],
 )

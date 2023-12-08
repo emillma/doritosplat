@@ -1,7 +1,5 @@
 #pragma once
-
-#include <sutil/Exception.h>
-
+#include <optix_types.h>
 #include <torch/extension.h>
 
 static void context_log_cb(unsigned int level, const char *tag, const char *message, void * /*cbdata */);

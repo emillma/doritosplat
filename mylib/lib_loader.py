@@ -34,8 +34,8 @@ def load_lib(name: str, sources: Path):
             ],
         )
     except Exception as e:
-        # print(e)
-        sys.exit(0)
+        print("\n\n------PYCRASH------\n\n")
+        raise e
     return module
 
 

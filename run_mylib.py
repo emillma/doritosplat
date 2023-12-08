@@ -15,6 +15,7 @@ vertices = torch.tensor(
     ],
     device="cuda",
 )
+
 context = c_optix.Context()
 
 scene = c_optix.Scene(context)
@@ -26,7 +27,7 @@ scene.build(tmp, bvh)
 module = c_optix.Module(context)
 module.load(ir)
 
-here = True
+# here = True
 # a, b = c_optix.triangle_setup(context, vertices)
 # build_config: structs.OptixBuildInput = a
 # buffer_sizez: structs.OptixAccelBufferSizes = b
