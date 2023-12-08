@@ -1,9 +1,7 @@
 from pathlib import Path
-import re
 from .gen_structs import get_structs
 from .gen_enums import get_enums
 
-# from .gen_pointers import get_pointers, c2py, py2c, pyargs, callargs, pytype, ptr_name
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 
@@ -13,9 +11,13 @@ def latest_change(path: Path):
 
 def any_change():
     generate_dir = Path(__file__).parent
+    generated_dir = Path(__file__).parents[1] / "generated"
     pycache_dir = Path(__file__).parents[1] / "__pycache__"
 
-    if latest_change(generate_dir) > latest_change(pycache_dir):
+    if (
+        latest_change(generate_dir) > latest_change(pycache_dir)
+        or not generated_dir.is_dir()
+    ):
         return True
     return False
 
@@ -24,7 +26,6 @@ def generate_bindings():
     if not any_change():
         return
     template_dir = Path(__file__).parent / "templates"
-
     generated_dir = Path(__file__).parents[1] / "generated"
     generated_dir.mkdir(exist_ok=True)
     generated_dir.joinpath("__init__.py").touch()
@@ -39,9 +40,13 @@ def generate_bindings():
         )
     )
     optix_types = Path("mylib/include/optix/optix_types.h")
+    my_types = Path("/workspaces/doritosplat/mylib/src/my_structs.h")
+
     # my_types = Path("mylib/src/my_types.h")
 
     optix_structs = get_structs(optix_types.read_text())
+    my_structs = get_structs(my_types.read_text())
+    structs = optix_structs + my_structs
     enums = get_enums(optix_types.read_text())
 
     env = Environment(
@@ -52,8 +57,8 @@ def generate_bindings():
     )
 
     render_params = [
-        ["structs.cpp.jinja", "optix_structs.cpp", dict(structs=optix_structs)],
-        ["structs.py.jinja", "optix_structs.py", dict(structs=optix_structs)],
+        ["structs.cpp.jinja", "structs.cpp", dict(structs=structs)],
+        ["structs.py.jinja", "structs.py", dict(structs=structs)],
         ["enums.cpp.jinja", "enums.cpp", dict(enums=enums)],
         ["enums.py.jinja", "enums.py", dict(enums=enums)],
     ]

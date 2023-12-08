@@ -21,6 +21,20 @@ PYBIND11_MODULE(TORCH_EXTENSION_NAME, m)
 
     m.def("sizeof_OptixTraversableHandle", []()
           { return sizeof(OptixTraversableHandle); });
+
+    m.def(
+        "test_vector", []()
+        {
+        std::vector<int> v;
+        v.push_back(1);
+        v.push_back(2);
+        return v; },
+        py::return_value_policy::take_ownership);
+
+    m.def("modify_vector", [](std::vector<int> &v)
+
+          { v[0] = 3; return v; });
+
     // py::class_<Context>(m, "Context")
     //     .def(py::init<>());
 

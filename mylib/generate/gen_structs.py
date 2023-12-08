@@ -1,7 +1,6 @@
 from pathlib import Path
 from dataclasses import dataclass, field
 import re
-from .utils import pointer_types, ignore_types
 
 flags = re.DOTALL | re.MULTILINE
 
@@ -46,26 +45,26 @@ class Struct:
 
 
 def get_structs(text: str):
-    struc_pat = re.compile(r"^typedef struct (\w+)\n?{\n?(.*?)\n} \1;", flags)
+    struc_pat = re.compile(r"^typedef struct[^{;]*?{\n?([^}]*?)\n} (\w+);", flags)
     field_pat = re.compile(r"^ *([a-zA-Z0-9 _\*]+?)(\w+);", flags)
     structs = []
 
     struct_matches = dict()
     for m in struc_pat.finditer(text):
-        name = m[1]
+        name = m[2]
         if name in ignore_structs:
             continue
         struct_matches[name] = m
 
     for name, m in struct_matches.items():
-        name = m[1]
-        body = m[2]
+        name = m[2]
+        body = m[1]
         fields = []
         for field_match in field_pat.finditer(body):
             field_type = field_match[1].strip()
             field_name = field_match[2]
-            if field_type in ignore_types:
-                continue
+            # if field_type in ignore_types:
+            #     continue
             fields.append(Field(field_type, field_name))
 
         structs.append(Struct(name, fields, start=m.start()))
