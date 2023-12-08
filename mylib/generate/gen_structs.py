@@ -9,6 +9,20 @@ ignore_structs = [
     "OptixInvalidRayExceptionDetails",
     "OptixParameterMismatchExceptionDetails",
 ]
+available_types = [
+    "char",
+    "short",
+    "int",
+    "long",
+    "unsigned char",
+    "unsigned short",
+    "unsigned int",
+    "unsigned long",
+    "size_t",
+    "float",
+    "double",
+    "CUdeviceptr",
+]
 
 
 @dataclass
@@ -16,6 +30,10 @@ class Field:
     type: str
     name: str
     is_const: bool = False
+    available = False
+
+    def __post_init__(self):
+        self.available = self.type in available_types
 
 
 @dataclass
@@ -31,11 +49,16 @@ def get_structs(text: str):
     field_pat = re.compile(r"^ *([a-zA-Z0-9 _\*]+?)(\w+);", flags)
     structs = []
 
+    struct_matches = dict()
     for m in struc_pat.finditer(text):
         name = m[1]
-        body = m[2]
         if name in ignore_structs:
             continue
+        struct_matches[name] = m
+
+    for name, m in struct_matches.items():
+        name = m[1]
+        body = m[2]
         fields = []
         for field_match in field_pat.finditer(body):
             field_type = field_match[1].strip()

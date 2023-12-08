@@ -1,0 +1,43 @@
+#include <optix_types.h>
+#include <torch/extension.h>
+#include <cuda_runtime.h>
+
+#include "generated_bindings.h"
+
+
+void bind_structs(py::module &m)
+{
+    {% for s in structs %}
+    py::class_<{{s.name}}>(m, "{{s.name}}")
+        .def(py::init<>())
+        {% for f in s.fields %}
+            {% if f.available %}
+            .def_property(
+            "{{f.name}}", 
+            [](const {{s.name}} &self){ return self.{{f.name}}; }, 
+            []({{s.name}} &self, {{f.type}} value){ self.{{f.name}} = value; },
+            py::return_value_policy::reference_internal)
+            {% endif %}
+        {% endfor %}
+        .def("get_size", []({{s.name}} &self) { return sizeof({{s.name}});})
+        .def("copy_to_tensor", []({{s.name}} &self, torch::Tensor tensor) {
+            if (tensor.nbytes() < sizeof({{s.name}}))
+                throw std::runtime_error("Tensor size does not match struct size");
+            if (tensor.is_cuda())
+                cudaMemcpy(tensor.data_ptr(), &self, sizeof({{s.name}}), cudaMemcpyHostToDevice); 
+            else
+                memcpy(tensor.data_ptr(), &self, sizeof({{s.name}}));
+        })
+        .def_static("from_tensor", [](torch::Tensor tensor) {
+            if (tensor.nbytes() < sizeof({{s.name}}))
+                throw std::runtime_error("Tensor size does not match struct size");
+            {{s.name}} out;
+            if (tensor.is_cuda())
+                cudaMemcpy(&out, tensor.data_ptr(), sizeof({{s.name}}), cudaMemcpyDeviceToHost); 
+            else
+                memcpy(&out, tensor.data_ptr(), sizeof({{s.name}}));
+            return out;
+        })
+        ;
+    {% endfor %}
+}

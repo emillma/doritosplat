@@ -15,7 +15,7 @@ vertices = torch.tensor(
     ],
     device="cuda",
 )
-
+assert vertices.data_ptr() % 64 == 0
 context = c_optix.Context()
 
 scene = c_optix.Scene(context)
@@ -27,16 +27,14 @@ scene.build(tmp, bvh)
 module = c_optix.Module(context)
 module.load(ir)
 
-# here = True
-# a, b = c_optix.triangle_setup(context, vertices)
-# build_config: structs.OptixBuildInput = a
-# buffer_sizez: structs.OptixAccelBufferSizes = b
 
-# accelerated_buffer = torch.zeros(buffer_sizez.outputSizeInBytes, device="cuda")
-# build_buffer = torch.zeros(buffer_sizez.tempSizeInBytes, device="cuda")
+header = [0] * 64
 
-# print("hello")
-# here = True
-# stubs.optixAccelComputeMemoryUsage(
-# mylib.cmylib.optixAccelComputeMemoryUsage(ctx)
-# print(mylib.myfunc("hello"))
+a = torch.empty(24, dtype=torch.uint8, device="cpu")
+sizes.copy_to_tensor(a)
+sezes2 = type(sizes).from_tensor(a)
+torch.tensor(
+    [*([0] * 64)],
+    dtype=torch.int64,
+    device="cuda",
+)

@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field, fields
-from ..c_bindings import c_structs
+from ..c_bindings import c_optix
 class Common:
 
     def __new__(cls, *args, **kwargs):
-        obj = getattr(c_structs, cls.__name__)()
+        obj = getattr(c_optix, cls.__name__)()
         for k, v in zip(fields(cls), args):
             setattr(obj, k.name, v)
             

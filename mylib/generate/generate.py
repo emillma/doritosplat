@@ -2,8 +2,8 @@ from pathlib import Path
 import re
 from .gen_structs import get_structs
 from .gen_enums import get_enums
-from .gen_stubs import get_stubs
-from .gen_pointers import get_pointers, c2py, py2c, pyargs, callargs, pytype, ptr_name
+
+# from .gen_pointers import get_pointers, c2py, py2c, pyargs, callargs, pytype, ptr_name
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 
 
@@ -27,15 +27,21 @@ def generate_bindings():
     generated_dir = Path(__file__).parents[1] / "generated"
     generated_dir.mkdir(exist_ok=True)
     generated_dir.joinpath("__init__.py").touch()
-
+    bindings_h = generated_dir.joinpath("generated_bindings.h")
+    bindings_h.write_text(
+        "\n".join(
+            (
+                '#include "torch/extension.h"',
+                "void bind_enums(py::module_ &m);",
+                "void bind_structs(py::module_ &m);",
+            )
+        )
+    )
     optix_types = Path("mylib/include/optix/optix_types.h")
-    stubs = Path("mylib/include/optix/optix_stubs.h")
     # my_types = Path("mylib/src/my_types.h")
 
     structs = get_structs(optix_types.read_text())
     enums = get_enums(optix_types.read_text())
-    stubs = get_stubs(stubs.read_text())
-    ptr_types = get_pointers(stubs)
 
     env = Environment(
         loader=FileSystemLoader(template_dir),
@@ -47,18 +53,10 @@ def generate_bindings():
     params = dict(
         structs=structs,
         enums=enums,
-        stubs=stubs,
-        ptr_types=ptr_types,
-        c2py=c2py,
-        py2c=py2c,
-        pyargs=pyargs,
-        callargs=callargs,
-        pytype=pytype,
-        ptr_name=ptr_name,
     )
     for thing in ["structs", "enums"]:
         for ftype in ["cpp", "py"]:
-            fname = f"{'c_' if ftype=='cpp' else ''}{thing}.{ftype}.jinja"
+            fname = f"{thing}.{ftype}.jinja"
             out_text = env.get_template(fname).render(params)
             out_path = generated_dir.joinpath(fname.replace(".jinja", ""))
             if not out_path.exists() or out_path.read_text() != out_text:

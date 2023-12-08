@@ -18,8 +18,6 @@ src_dir = Path(__file__).parent / "src"
 generated_dir = Path(__file__).parent / "generated"
 mylib_dir = Path(__file__).parent
 
-c_structs = load_lib("c_structs", [generated_dir / "c_structs.cpp"])
-c_enums = load_lib("c_enums", [generated_dir / "c_enums.cpp"])
 c_optix = load_lib(
     "c_optix",
     [
@@ -27,6 +25,8 @@ c_optix = load_lib(
         src_dir / "scene.cpp",
         src_dir / "module.cpp",
         src_dir / "c_optix.cpp",
+        generated_dir / "enums.cpp",
+        generated_dir / "structs.cpp",
     ],
 )
 # c_stubs = load_lib("c_stubs", [generated_dir / "c_stubs.cpp"])

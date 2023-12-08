@@ -1,7 +1,9 @@
 #include "optix_types.h"
 #include <torch/extension.h>
 
-PYBIND11_MODULE(c_enums, m)
+#include "generated_bindings.h"
+
+void bind_enums(py::module &m)
 {
     {% for e in enums %}
     py::enum_<{{e.name}}>(m, "{{e.name}}")

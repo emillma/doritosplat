@@ -1,9 +1,9 @@
-from ..c_bindings import c_enums
+from ..c_bindings import c_optix
 
 {% for e in enums %}
 class {{ e.name }}:
     {% for v in e.values %}
-    {{ v.name }} = c_enums.{{ e.name }}.{{ v.name }}
+    {{ v.name }} = c_optix.{{ e.name }}.{{ v.name }}
     {% endfor %}
 {% endfor %}
 

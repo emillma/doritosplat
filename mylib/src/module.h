@@ -18,6 +18,7 @@ class Module
 
     OptixPipeline pipeline = nullptr;
     OptixPipelineLinkOptions pipeline_link_options = {.maxTraceDepth = 1};
+    uint32_t max_traversal_depth = 1; // nested bvhs
 
 public:
     Module(Context &context);

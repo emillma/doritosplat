@@ -1,7 +1,0 @@
-from ..c_bindings import c_stubs
-from . import structs
-
-{% for s in stubs %}
-def {{s.name}}({{s.args | map(attribute='name') | join(', ')}}):
-    return c_stubs.{{s.name}}({{s.args | map(attribute='name') | join(', ')}})
-{% endfor%}

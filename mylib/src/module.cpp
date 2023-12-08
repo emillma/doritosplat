@@ -70,11 +70,12 @@ void Module::load(std::string ptx_source)
                                            &direct_callable_stack_size_from_traversal,
                                            &direct_callable_stack_size_from_state,
                                            &continuation_stack_size));
+
     OPTIX_CHECK(optixPipelineSetStackSize(pipeline, direct_callable_stack_size_from_traversal,
                                           direct_callable_stack_size_from_state, continuation_stack_size,
-                                          1 // maxTraversableDepth
-                                          ));
+                                          max_traversal_depth));
 };
+
 
 void bind_module(py::module &m)
 {
