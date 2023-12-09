@@ -29,7 +29,7 @@ class Module
     OptixPipelineLinkOptions pipeline_link_options = {.maxTraceDepth = 1};
 
     std::vector<OptixProgramGroup> program_groups;
-    OptixShaderBindingTable sbt;
+    OptixShaderBindingTable sbt = {};
 
     unsigned int maxCCDepth = 1;
     unsigned int maxDCDEpth = 1;

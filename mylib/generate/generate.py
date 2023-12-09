@@ -9,22 +9,7 @@ def latest_change(path: Path):
     return max(f.stat().st_mtime for f in path.rglob("*"))
 
 
-def any_change():
-    generate_dir = Path(__file__).parent
-    generated_dir = Path(__file__).parents[1] / "generated"
-    pycache_dir = Path(__file__).parents[1] / "__pycache__"
-
-    if (
-        latest_change(generate_dir) > latest_change(pycache_dir)
-        or not generated_dir.is_dir()
-    ):
-        return True
-    return False
-
-
 def generate_bindings():
-    if not any_change():
-        return
     template_dir = Path(__file__).parent / "templates"
     generated_dir = Path(__file__).parents[1] / "generated"
     generated_dir.mkdir(exist_ok=True)

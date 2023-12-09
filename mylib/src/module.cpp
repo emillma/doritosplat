@@ -98,7 +98,7 @@ void Module::generate_sbt(torch::Tensor &raygen_record, torch::Tensor &hitgroup_
     {
         if (rec.dim() != 2)
             throw std::runtime_error("hit and miss records must be 2-dimensional");
-        if (rec.stride(0) * rec.dtype().itemsize() != OPTIX_SBT_RECORD_ALIGNMENT)
+        if (rec.stride(0) * rec.dtype().itemsize() % OPTIX_SBT_RECORD_ALIGNMENT != 0)
             throw std::runtime_error("hit and miss records must be OPTIX_SBT_RECORD_ALIGNMENT bytes apart");
     }
 

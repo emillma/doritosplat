@@ -5,7 +5,7 @@ from mylib.c_bindings import c_optix
 
 
 # context = c_optix.create_context()
-ir = get_optixir("/workspaces/doritosplat/insp/optixTriangle/optixTriangle.cu")
+ir = get_optixir("/workspaces/doritosplat/mylib/optix/optixTriangle.cu")
 
 vertices = torch.tensor(
     [
@@ -30,7 +30,7 @@ module.configure()
 headers = module.get_sbt_headers()
 
 
-raygen_record = torch.zeros(headers[0], dtype=torch.uint8, device="cuda")
+raygen_record = torch.tensor(headers[0], dtype=torch.uint8, device="cuda")
 hit_record = torch.tensor([headers[1]], dtype=torch.uint8, device="cuda")
 miss_record = torch.tensor([headers[2]], dtype=torch.uint8, device="cuda")
 
@@ -43,3 +43,4 @@ image = torch.empty(256, 256, dtype=torch.float32, device="cuda")
 params = torch.tensor([image.data_ptr()], dtype=torch.int64, device="cuda")
 
 module.launch(params, stream.cuda_stream)
+here = True
