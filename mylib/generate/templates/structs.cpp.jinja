@@ -11,13 +11,11 @@ void bind_structs(py::module &m)
     py::class_<{{s.name}}>(m, "{{s.name}}")
         .def(py::init<>())
         {% for f in s.fields %}
-            {% if f.available %}
             .def_property(
             "{{f.name}}", 
             [](const {{s.name}} &self){ return self.{{f.name}}; }, 
             []({{s.name}} &self, {{f.type}} value){ self.{{f.name}} = value; },
             py::return_value_policy::reference_internal)
-            {% endif %}
         {% endfor %}
         .def("get_size", []({{s.name}} &self) { return sizeof({{s.name}});})
         .def("copy_to_tensor", []({{s.name}} &self, torch::Tensor tensor) {
@@ -38,6 +36,7 @@ void bind_structs(py::module &m)
                 memcpy(&out, tensor.data_ptr(), sizeof({{s.name}}));
             return out;
         })
+        
         ;
     {% endfor %}
 }

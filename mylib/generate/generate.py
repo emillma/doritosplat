@@ -44,10 +44,13 @@ def generate_bindings():
 
     # my_types = Path("mylib/src/my_types.h")
 
-    optix_structs = get_structs(optix_types.read_text())
-    my_structs = get_structs(my_types.read_text())
-    structs = optix_structs + my_structs
     enums = get_enums(optix_types.read_text())
+    enum_names = [e.name for e in enums]
+    optix_structs = get_structs(optix_types.read_text(), enum_names)
+    my_structs = get_structs(
+        my_types.read_text(), enum_names + [s.name for s in optix_structs]
+    )
+    structs = optix_structs + my_structs
 
     env = Environment(
         loader=FileSystemLoader(template_dir),

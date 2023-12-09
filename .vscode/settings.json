@@ -82,7 +82,9 @@
         "typeinfo": "cpp",
         "valarray": "cpp",
         "variant": "cpp",
-        "__nullptr": "cpp"
+        "__nullptr": "cpp",
+        "csignal": "cpp",
+        "ios": "cpp"
     },
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#ff6433",
