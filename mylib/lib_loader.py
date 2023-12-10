@@ -25,6 +25,7 @@ def load_lib(name: str, sources: Path):
             sources=[str(s) for s in sources],
             build_directory=str(build_dir),
             verbose=True,
+            keep_intermediates=True,
             extra_include_paths=[str(p) for p in include_dirs],
             with_cuda=True,
             extra_cuda_cflags=[

@@ -1,19 +1,17 @@
 from dataclasses import dataclass, field, fields
-from ..c_bindings import c_optix
-class Common:
+from ..clib import _clib
 
+class Common:
+    
     def __new__(cls, *args, **kwargs):
-        obj = getattr(c_optix, cls.__name__)()
+        obj = getattr(_clib, cls.__name__)()
+
         for k, v in zip(fields(cls), args):
             setattr(obj, k.name, v)
             
         for k, v in kwargs.items():
             setattr(obj, k, v)
         return obj
-
-    
-    def to_ptr(self)->'Pointer':
-        return self.to_ptr()
 
 {% for s in structs %}
 @dataclass

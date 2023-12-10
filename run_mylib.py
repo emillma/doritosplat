@@ -1,7 +1,7 @@
 import torch
 from mylib import structs, enums
 from mylib.lib_loader import get_optixir
-from mylib.c_bindings import c_optix
+from mylib.clib import _clib
 from torchvision.utils import save_image
 
 torch.set_grad_enabled(False)
@@ -10,22 +10,22 @@ ir = get_optixir("/workspaces/doritosplat/mylib/optix/optixTriangle.cu")
 
 vertices = torch.tensor(
     [
-        [-0.5, -0.5, 10],
-        [0.5, -0.5, 10],
-        [0.0, 0.5, 10],
+        [-0.5, -0.5, 1],
+        [0.5, -0.5, 1],
+        [0.0, 0.5, 1],
     ],
     device="cuda",
 )
 assert vertices.data_ptr() % 64 == 0
-context = c_optix.Context()
+context = _clib.Context()
 
-scene = c_optix.Scene(context)
+scene = _clib.Scene(context)
 sizes: structs.OptixAccelBufferSizes = scene.set_vertex_pointer(vertices)
 tmp = torch.empty(sizes.tempSizeInBytes, dtype=torch.uint8, device="cuda")
 bvh = torch.empty(sizes.outputSizeInBytes, dtype=torch.uint8, device="cuda")
 scene.build(tmp, bvh)
 
-module = c_optix.Module(context)
+module = _clib.Module(context)
 module.load(ir)
 module.configure()
 headers = module.get_sbt_headers()

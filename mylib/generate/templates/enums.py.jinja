@@ -1,9 +1,11 @@
-from ..c_bindings import c_optix
+from typing import ClassVar
+from ..clib import _clib
 
+    
 {% for e in enums %}
 class {{ e.name }}:
     {% for v in e.values %}
-    {{ v.name }} = c_optix.{{ e.name }}.{{ v.name }}
+    {{ v.name }} = _clib.{{ e.name }}.{{ v.name }}
     {% endfor %}
 {% endfor %}
 
