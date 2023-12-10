@@ -11,12 +11,13 @@ class Scene
     CUdeviceptr d_vertices = {};
     OptixAccelBuildOptions accel_options = {};
     OptixAccelBufferSizes gas_buffer_sizes = {};
-    OptixTraversableHandle gas_handle = {};
     OptixBuildInput triangle_input = {};
 
     const uint32_t triangle_input_flags[1] = {OPTIX_GEOMETRY_FLAG_NONE};
 
 public:
+    OptixTraversableHandle gas_handle;
+
     Scene(Context &context);
 
     OptixAccelBufferSizes set_vertex_pointer(torch::Tensor vertices);

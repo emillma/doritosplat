@@ -2,16 +2,17 @@ import torch
 from mylib import structs, enums
 from mylib.lib_loader import get_optixir
 from mylib.c_bindings import c_optix
+from torchvision.utils import save_image
 
+torch.set_grad_enabled(False)
 
-# context = c_optix.create_context()
 ir = get_optixir("/workspaces/doritosplat/mylib/optix/optixTriangle.cu")
 
 vertices = torch.tensor(
     [
-        [-0.5, -0.5, 0],
-        [0.5, -0.5, 0],
-        [0.0, 0.5, 0],
+        [-0.5, -0.5, 10],
+        [0.5, -0.5, 10],
+        [0.0, 0.5, 10],
     ],
     device="cuda",
 )
@@ -37,10 +38,21 @@ miss_record = torch.tensor([headers[2]], dtype=torch.uint8, device="cuda")
 module.generate_sbt(raygen_record, hit_record, miss_record)
 stream = torch.cuda.Stream()
 
-image = torch.empty(256, 256, dtype=torch.float32, device="cuda")
+image = torch.zeros(256, 256, dtype=torch.float32, device="cuda")
 
+# params = structs.Params(han
 
-params = torch.tensor([image.data_ptr()], dtype=torch.int64, device="cuda")
+params = torch.tensor(
+    [
+        scene.gas_handle,
+        image.data_ptr(),
+    ],
+    dtype=torch.int64,
+    device="cuda",
+)
 
 module.launch(params, stream.cuda_stream)
-here = True
+print(image.min(), image.max())
+image -= image.min()
+image /= image.max()
+save_image(image, "test.png")

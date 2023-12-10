@@ -2,6 +2,7 @@
 
 typedef struct
 {
+    OptixTraversableHandle handle;
     float *output_buffer;
 } Params;
 

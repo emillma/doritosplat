@@ -51,5 +51,7 @@ void bind_scene(py::module &m)
     py::class_<Scene>(m, "Scene")
         .def(py::init<Context &>())
         .def("set_vertex_pointer", &Scene::set_vertex_pointer)
-        .def("build", &Scene::build);
+        .def("build", &Scene::build)
+        .def_property_readonly("gas_handle", [](Scene &scene)
+                               { return scene.gas_handle; });
 }
