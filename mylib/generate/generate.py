@@ -32,10 +32,10 @@ def generate_bindings():
     enums = get_enums(optix_types.read_text())
     enum_names = [e.name for e in enums]
     optix_structs = get_structs(optix_types.read_text(), enum_names)
-    my_structs = get_structs(
-        my_types.read_text(), enum_names + [s.name for s in optix_structs]
-    )
-    structs = optix_structs + my_structs
+    # my_structs = get_structs(
+    #     my_types.read_text(), enum_names + [s.name for s in optix_structs]
+    # )
+    structs = optix_structs
 
     env = Environment(
         loader=FileSystemLoader(template_dir),

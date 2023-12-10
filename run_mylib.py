@@ -38,7 +38,7 @@ miss_record = torch.tensor([headers[2]], dtype=torch.uint8, device="cuda")
 module.generate_sbt(raygen_record, hit_record, miss_record)
 stream = torch.cuda.Stream()
 
-image = torch.zeros(256, 256, dtype=torch.float32, device="cuda")
+image = torch.zeros(1920, 1080, 3, dtype=torch.float32, device="cuda")
 
 # params = structs.Params(han
 
@@ -55,4 +55,5 @@ module.launch(params, stream.cuda_stream)
 print(image.min(), image.max())
 image -= image.min()
 image /= image.max()
+image = image.permute(2, 1, 0)
 save_image(image, "test.png")

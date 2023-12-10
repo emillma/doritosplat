@@ -5,7 +5,8 @@
 #include <c10/cuda/CUDAStream.h>
 
 #include "context.h"
-#include "my_structs.h"
+#include "config.h"
+
 class Module
 {
     OptixDeviceContext context;

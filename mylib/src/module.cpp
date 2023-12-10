@@ -121,9 +121,9 @@ void Module::launch(torch::Tensor &params, size_t stream)
                             (CUdeviceptr)params.data_ptr(),
                             params.nbytes(),
                             &sbt,
-                            256,
-                            256,
-                            1));
+                            IMGX,
+                            IMGY,
+                            IMGZ));
 };
 
 void bind_module(py::module &m)

@@ -84,7 +84,10 @@
         "variant": "cpp",
         "__nullptr": "cpp",
         "csignal": "cpp",
-        "ios": "cpp"
+        "ios": "cpp",
+        "dense": "cpp",
+        "core": "cpp",
+        "alignedvector3": "cpp"
     },
     "workbench.colorCustomizations": {
         "activityBar.activeBackground": "#ff6433",
