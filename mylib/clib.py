@@ -3,7 +3,7 @@ import shutil
 from .generate.generate import generate_bindings
 from .lib_loader import load_lib
 
-FORCE = True
+FORCE = False
 
 mylib_dir = Path(__file__).parent
 src_dir = mylib_dir / "src"
@@ -25,7 +25,7 @@ if FORCE or latest_change(generate_dir) > latest_change(generated_dir):
 
 
 module_name = "_clib"
-if latest_change(src_dir, generated_dir) > latest_change(build_dir):
+if FORCE or latest_change(src_dir, generated_dir) > latest_change(build_dir):
     _clib = load_lib(
         module_name,
         [

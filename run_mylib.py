@@ -38,7 +38,7 @@ miss_record = torch.tensor([headers[2]], dtype=torch.uint8, device="cuda")
 module.generate_sbt(raygen_record, hit_record, miss_record)
 stream = torch.cuda.Stream()
 
-image = torch.zeros(1920, 1080, 3, dtype=torch.float32, device="cuda")
+image = torch.zeros(1920, 1080, 4, dtype=torch.float32, device="cuda")
 
 # params = structs.Params(han
 

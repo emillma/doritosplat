@@ -2,9 +2,9 @@
 **/build/
 .devcontainer2/
 CSE-168-OptiX-Starter-Code/
+/insp
 mylib/include
 mylib/generated
-optix/
 NVIDIA-OptiX-SDK-8.0.0-linux64-x86_64
 NVIDIA-OptiX-SDK-8.0.0-linux64-x86_64.sh
 optix_advanced_samples
