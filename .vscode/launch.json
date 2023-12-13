@@ -13,10 +13,10 @@
             "justMyCode": false
         },
         {
-            "name": "Python: Run",
+            "name": "Python: Run Descriptor",
             "type": "python",
             "request": "launch",
-            "program": "test.py",
+            "program": "descriptor/run.py",
             "console": "integratedTerminal",
             "justMyCode": true
         },
