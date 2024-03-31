@@ -6,7 +6,9 @@ from torchvision.utils import save_image
 
 torch.set_grad_enabled(False)
 
-ir = get_optixir("/workspaces/doritosplat/mylib/optix/optixTriangle.cu")
+ir = get_optixir(
+    "/workspaces/emillma-sensorrig/doritosplat/mylib/optix/optixTriangle.cu"
+)
 
 vertices = torch.tensor(
     [
